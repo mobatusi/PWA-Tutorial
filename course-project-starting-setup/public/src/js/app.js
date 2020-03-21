@@ -1,3 +1,9 @@
+var deferredPrompt;
+
+if(!window.Promise){
+    window.Promise = Promise;
+}
+
 if ('serviceWorker' in navigator)
 {
     navigator.serviceWorker
@@ -26,16 +32,16 @@ var promise = new Promise(function(resolve, reject) {
 });
 
 var xhr = new XMLHttpRequest();
-xhr.Open('GET', 'https://httpbin.org/ip');
+xhr.open('GET', 'https://httpbin.org/ip');
 xhr.responseType = 'json';
 
 xhr.onload = function() {
     console.log(xhr.response);
-});
+};
 
-xhr.onerror = function(0 {
+xhr.onerror = function() {
     console.log('Error!');
-});
+};
 
 xhr.send();
 
