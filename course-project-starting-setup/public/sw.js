@@ -1,5 +1,5 @@
 
-var CACHE_STATIC_NAME = 'static-v4';
+var CACHE_STATIC_NAME = 'static-v11';
 var CACHE_DYNAMIC_NAME = 'dynamic-v2';
 
 self.addEventListener('install', function(event) {
@@ -11,6 +11,7 @@ self.addEventListener('install', function(event) {
         cache.addAll([
           '/',
           '/index.html',
+          '/offline.html',
           '/src/js/app.js',
           '/src/js/feed.js',
           '/src/js/promise.js',
@@ -58,6 +59,12 @@ self.addEventListener('fetch', function(event) {
                   cache.put(event.request.url, res.clone());
                   return res;
                 })
+            })
+            .catch(function(err) {
+                return caches.open(CACHE_STATIC_NAME)
+                .then(function(cache) {
+                    return cache.match('/offline.html');
+                });
             });
         }
       })
