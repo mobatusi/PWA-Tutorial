@@ -45,6 +45,17 @@ self.addEventListener('activate', function(event) {
   return self.clients.claim();
 });
 
+function isInArray(string, array) {
+  var cachePath;
+  if (string.indexOf(self.origin) === 0) { // request targets domain where we serve the page from (i.e. NOT a CDN)
+    console.log('matched ', string);
+    cachePath = string.substring(self.origin.length); // take the part of the URL AFTER the domain (e.g. after localhost:8080)
+  } else {
+    cachePath = string; // store the full request (for CDNs)
+  }
+  return array.indexOf(cachePath) > -1;
+}
+
 self.addEventListener('fetch', function(event) {
     var url = 'https://httpbin.org/get';
     if(event.request.url.indexOf(url) > -1) {
@@ -59,7 +70,7 @@ self.addEventListener('fetch', function(event) {
             })
         );
     }
-    else if( new RegExp('\\b' + STATIC_FILES.join('\\b')).test(event.request.url)){
+    else if( isInArray(event.request.url, STATIC_FILES)){
       event.respondWith(
         fetch(event.request)
     );
